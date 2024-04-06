@@ -1,0 +1,20 @@
+# Dependency directories
+node_modules/
+
+# Environment variables file
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Build files
+/build
+
+# Dependency lock files
+package-lock.json
+yarn.lock

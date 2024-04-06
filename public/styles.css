@@ -1,0 +1,41 @@
+.scrollable-table {
+    overflow: auto; /* This enables scrolling */
+    border: 1px solid #ccc; /* Optional: Add border for visual clarity */
+    height: 300px; /* Adjust height as needed */
+
+}
+
+/* This makes sure all the table head componenets don't scroll, so they can be seen at all times */
+.scrollable-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Adjust as needed */
+    z-index: 1;
+}
+
+
+
+
+.table-data {
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 150px; /* Adjust based on your needs */
+}
+
+
+.new-day-col {
+    text-align: center; /* Centers text horizontally */
+    vertical-align: middle; /* Centers content vertically */
+}
+/* Media query for mobile screens */
+@media (max-width: 600px) {
+    .table-data {
+        font-size: .8rem;
+    }
+    .table-title {
+
+        font-size: 0.9rem;
+    }
+}
+
+

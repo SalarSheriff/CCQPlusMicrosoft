@@ -1,0 +1,13 @@
+Ability to sign out cadets
+- CCQ has input field for cadet name then toggle for type of signout
+
+
+Add filter selector to /getqlog
+- When select a filter, add a tab which shows that the filter is active with an x to disable
+
+Date line in table
+
+Print day function
+
+Make it look futursitc like the situation room
+- 

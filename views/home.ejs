@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCQ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+   
+
+    <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h1>Hey <%= cadetname %></h1>
+                <p>Assumed CCQ at <%= assumetime%></p>
+                <p id="shiftinformation">Time Left: xyx</p>
+
+
+
+                <button id="presencepatrolbtn" onclick="presencePatrol()" type="button" class="btn btn-primary">Begin Presence Patrol</button>
+         
+                <br>
+                <select name="ptduration" id="ptduration" >
+                    <option value="30">30 min</option>
+                    <option value="60">1 hour</option>
+                    <option value="90">1 hour 30 min</option>
+                    
+                  </select>
+                <button class="btn btn-info" onclick="uploadPTBreak()">Input PT Break</button>
+    
+                <br>
+                <button id="endshiftbtn" onclick="endShift()" type="button" class="btn btn-danger">End Shift</button>
+                <br>
+
+                
+                <h1>Logs</h1>
+                <div id="scrollable_table" class="scrollable-table">
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th class="table-title" scope="col">Time In</th>
+                            <th class="table-title" scope="col">TimeOut</th>
+                            <th class="table-title" scope="col">Name</th>
+                            <th class="table-title" scope="col">Message</th>
+                            <th class="table-title" scope="col">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody >
+                   
+                            
+                        <% for(let i = 0; i < logs.length; i++ ){ %>
+
+
+                          <%  if( i > 0 && parseInt(logs[i].id.substr(6, 2)) > parseInt(logs[i-1].id.substr(6, 2))) {%>
+                            
+                            <tr>
+                            <td colspan="5" class="new-day-col">NEW DAY <%= logs[i].id.substr(4, 2) %>/<%= logs[i].id.substr(6, 2) %>/<%= logs[i].id.substr(2, 2) %></td>
+                          </tr>
+                          <% } %>
+                          
+                       
+                            <tr>
+                           
+                            <td class="table-data"><%= logs[i].time %></td>
+                            <td class="table-data"><%= logs[i].time_end %></td>
+                            <td class="table-data"><%= logs[i].name %></td>
+                            <td class="table-data"><%= logs[i].message %></td>
+                            <td class="table-data"><%= logs[i].action %></td>
+                          </tr>
+
+                        
+                        <% } %>
+                        </tbody>
+                   
+                      </table>
+                    
+                    </div>
+
+                    <div class="form-group">
+                      <h4>Input Special Message</h4>
+                      <textarea class="form-control" id="special_message_text_area" rows="3"></textarea>
+                      <button onclick="uploadSpecialMessage()" type="button" class="btn btn-success">Submit</button>
+                    </div>
+               
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    
+
+    <!-- Bootstrap JavaScript from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <script>
+
+
+// Execute this code after the content is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    // Scroll table display to bottom
+    let scrollTable = document.querySelector("#scrollable_table");
+    scrollTable.scrollTop = scrollTable.scrollHeight;
+});
+
+
+
+function getCurrentMilitaryTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
+  function getShiftElapsedTime() {
+    // Calculate the difference between the current time and the initial time
+    const currentTime = getCurrentMilitaryTime();
+    const initialTimeArray = "<%= assumetime %>".split(':').map(Number);
+    const currentTimeArray = currentTime.split(':').map(Number);
+    
+    let hoursLeft = currentTimeArray[0] - initialTimeArray[0];
+    let minutesLeft = currentTimeArray[1] - initialTimeArray[1];
+    
+    // Adjust hours and minutes if they're negative
+    if (minutesLeft < 0) {
+        hoursLeft -= 1;
+        minutesLeft += 60;
+    }
+    if (hoursLeft < 0) {
+        hoursLeft += 24; // Assuming 24-hour time format
+    }
+
+    return `${hoursLeft.toString().padStart(2, '0')}:${minutesLeft.toString().padStart(2, '0')}`;
+}
+
+
+const shiftInformationDisplay = document.querySelector('#shiftinformation');
+
+setInterval(() => {
+ 
+    shiftInformationDisplay.textContent = "Elapsed Time: " + getShiftElapsedTime() + " of <%= shiftduration%> hours";
+}, 1000);
+
+
+let onPatrol = false;
+let timeOnPatrol = 0;
+let presencePatrolStartTime = getCurrentMilitaryTime();
+let presencePatrolBtn = document.querySelector("#presencepatrolbtn");
+let timer;// has to be global so it can be cleared later
+function presencePatrol() {
+
+    if(!onPatrol) {
+
+        onPatrol = true;
+        timer = setInterval(()=> {
+        timeOnPatrol += 1;
+        presencePatrolBtn.textContent = "Currently on Presence Patrol for: " + timeOnPatrol + "\n Click to end patrol";
+        presencePatrolBtn.classList.remove("btn-primary");
+        presencePatrolBtn.classList.add("btn-warning");
+
+
+
+
+
+    }, 1000)
+
+
+
+
+
+    }
+    else if(onPatrol) {
+        clearInterval(timer);
+        onPatrol = false;
+        presencePatrolBtn.classList.add("btn-primary");
+        presencePatrolBtn.classList.remove("btn-warning");
+        presencePatrolBtn.textContent = "Begin Presence Patrol";
+
+
+
+        let message = prompt("<%= cadetname %>, Input any remarks from the presence patrol.")
+
+
+
+
+        alert("Thank you <%= cadetname %>, your remarks have been noted!")
+
+
+
+        
+//Send Log to server of starting presnece patrol
+    //Send request to node js server, then to database
+
+
+
+        timeOnPatrol = 0;
+        
+        
+
+
+        //The end time of the presence patrol is covered on the server side. The server just gets the current time and uses that as the end time
+        fetch(document.location.origin + '/uploadpresencepatrol/<%=cadetname%>/' + presencePatrolStartTime + '/' + message + '/' + "patrol").then(()=> {
+            location.reload();
+            
+        })
+
+        
+       
+    }
+    
+}
+
+function endShift() {
+    //The end time of the presence patrol is covered on the server side. The server just gets the current time and uses that as the end time
+    fetch(document.location.origin + '/endshift/<%= cadetname %>')
+    // .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok');
+    //         }
+    //         return response.json();
+    //     }).then(data => {
+           
+    //     }).catch(error => {
+    //         console.error('There was a problem with your fetch operation:', error);
+    //     });
+
+
+        //send back to login
+        window.location.href = "/";
+}
+function uploadPTBreak() {
+    let ptBreakDuration = document.querySelector("#ptduration").value;
+    fetch(document.location.origin + '/ptbreak/<%= cadetname %>/' + ptBreakDuration).then(()=> {
+        location.reload();
+    });
+}
+
+function uploadSpecialMessage() {
+  let specialMessage = document.querySelector("#special_message_text_area").value;
+    fetch(document.location.origin + '/specialmessage/<%= cadetname %>/' + specialMessage).then(()=> {
+        location.reload();
+    });
+
+}
+
+
+
+    </script>
+</body>
+</html>

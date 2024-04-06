@@ -1,0 +1,14 @@
+.scrollable-table {
+    overflow: auto; /* This enables scrolling */
+    border: 1px solid #ccc; /* Optional: Add border for visual clarity */
+    height: 300px; /* Adjust height as needed */
+
+}
+
+/* This makes sure all the table head componenets don't scroll, so they can be seen at all times */
+.scrollable-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Adjust as needed */
+    z-index: 1;
+}

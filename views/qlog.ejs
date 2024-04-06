@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCQ Log</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div id="scrollable_table" class="scrollable-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Time In</th>
+                                    <th scope="col">TimeOut</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Message</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="display_table_log">
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <!-- Bootstrap JavaScript from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+<script>
+
+
+let activeFilters = []
+
+let data = [];
+
+// Execute this code after the content is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    // Scroll table display to bottom
+    let scrollTable = document.querySelector("#scrollable_table");
+    scrollTable.scrollTop = scrollTable.scrollHeight;
+});
+
+
+function generateTable() {
+
+
+    //Gotta get the string version and then parse locally because can't really use EJS loops in JS 
+   
+    // Define your data array
+        let data = [];
+        
+        // Populate the data array
+        //THIS WORKS CAUSE EJS, RED autocorrect :(  
+        <% for(let i = 0; i < logs.length; i++ ){ %>
+            data.push({time: "<%= logs[i].time %>", time_end: "<%= logs[i].time_end %>", name: "<%= logs[i].name %>", message: "<%= logs[i].message %>", action: "<%= logs[i].action %>"});
+        <% } %>
+
+    let tableBody = document.querySelector("#display_table_log")
+
+    for(let i = 0; i < data.length; i++) {
+        let tableRow = document.createElement("tr");
+
+        let timeInDatacell = document.createElement("td")
+        timeInDatacell.textContent = data[i].time;
+        tableRow.appendChild(timeInDatacell);
+
+        let timeOutDatacell = document.createElement("td")
+        timeOutDatacell.textContent = data[i].time_end;
+        tableRow.appendChild(timeOutDatacell);
+
+        let nameDatacell = document.createElement("td")
+        nameDatacell.textContent = data[i].name;
+        tableRow.appendChild(nameDatacell);
+
+        let messageDatacell = document.createElement("td")
+        messageDatacell.textContent = data[i].message;
+        tableRow.appendChild(messageDatacell);
+
+        let actionDatacell = document.createElement("td")
+        actionDatacell.textContent = data[i].action;
+        tableRow.appendChild(actionDatacell);
+
+        tableBody.appendChild(tableRow);
+    }
+    
+    
+
+
+}
+
+
+
+generateTable();
+</script>
+
+
+
+</body>
+</html>
